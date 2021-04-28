@@ -20,9 +20,8 @@ def index():
 	return render_template('index.html', **templateData)
 	
 
-@app.route("/<group>")
-def groupIndex(group):
-    if group == "propulsion" :
+@app.route("/propulsion")
+def groupIndex():
         templateData = {
             'propulsionPercentage' : propulsionProgress,
             'propulsionTask1' : propulsionTaskList[0],
@@ -34,8 +33,9 @@ def groupIndex(group):
         }
         return render_template('propulsion.html', **templateData)
 
-@app.route("/<group>/<task>/<taskNum>")
-def propulsionTasks(group, task, taskNum):
+@app.route("/propulsion/Task/<taskNum>")
+def propulsionTasks(taskNum):
+    global propulsionProgress, propulsionTaskList
     # complete a task and check it
     taskNum = int(taskNum)
     if propulsionTaskList[taskNum - 1] == "":
@@ -55,6 +55,6 @@ def propulsionTasks(group, task, taskNum):
             'propulsionTask6' : propulsionTaskList[5],
         }
     return render_template('propulsion.html', **templateData)
-
+    
 if __name__ == "__main__":
    app.run(host='0.0.0.0', port=80, debug=True)
