@@ -42,7 +42,9 @@ def propulsionTasks(group, task, taskNum):
         propulsionTaskList[taskNum - 1] = "checked"
     # remove task if unchecked
     else:
-        propulsionTaskList[taskNum - 1] = 0
+        propulsionTaskList[taskNum - 1] = ""
+
+    propulsionProgress = propulsionTaskList.count("checked") / propulsionNumTasks * 100
     templateData = {
             'propulsionPercentage' : propulsionProgress,
             'propulsionTask1' : propulsionTaskList[0],
