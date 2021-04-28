@@ -34,6 +34,7 @@ def groupIndex():
             'propulsionTask4' : propulsionTaskList[3],
             'propulsionTask5' : propulsionTaskList[4],
             'propulsionTask6' : propulsionTaskList[5],
+            'propulsionWarnings' : "None",
         }
         return render_template('propulsion.html', **templateData)
 
@@ -57,6 +58,7 @@ def propulsionTasks(taskNum):
             'propulsionTask4' : propulsionTaskList[3],
             'propulsionTask5' : propulsionTaskList[4],
             'propulsionTask6' : propulsionTaskList[5],
+            'propulsionWarnings' : "None",
         }
     return render_template('propulsion.html', **templateData)
 
@@ -66,12 +68,14 @@ def propulsionActions(action):
     if action == "abort":
         propulsionProgress = 0
         propulsionTaskList = [""] * propulsionNumTasks
+        warnings = "None"
     elif action == "go":
         if propulsionProgress == 100:
             goStatus[0] = 1
+            warnings = "None"
         else:
             #print out warnings
-            print("incomplete")
+            warnings = "incomplete tasks"
     
     templateData = {
             'propulsionPercentage' : propulsionProgress,
@@ -81,6 +85,7 @@ def propulsionActions(action):
             'propulsionTask4' : propulsionTaskList[3],
             'propulsionTask5' : propulsionTaskList[4],
             'propulsionTask6' : propulsionTaskList[5],
+            'propulsionWarnings' : warnings,
         }
     return render_template('propulsion.html', **templateData)
 
