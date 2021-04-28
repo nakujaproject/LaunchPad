@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+import numpy as np
 
 app = Flask(__name__)
 
@@ -10,6 +11,9 @@ propulsionNumTasks = 6
 
 #propulsion task list
 propulsionTaskList = [""] * propulsionNumTasks
+
+#team go status
+goStatus = np.zeros(3)
 
 @app.route("/")
 def index():
@@ -55,6 +59,30 @@ def propulsionTasks(taskNum):
             'propulsionTask6' : propulsionTaskList[5],
         }
     return render_template('propulsion.html', **templateData)
+
+@app.route("/propulsion/<action>")
+def propulsionActions(action):
+    global propulsionProgress, propulsionTaskList, goStatus
+    if action == "abort":
+        propulsionProgress = 0
+        propulsionTaskList = [""] * propulsionNumTasks
+    elif action == "go":
+        if propulsionProgress == 100:
+            goStatus[0] = 1
+        else:
+            #print out warnings
+            print("incomplete")
     
+    templateData = {
+            'propulsionPercentage' : propulsionProgress,
+            'propulsionTask1' : propulsionTaskList[0],
+            'propulsionTask2' : propulsionTaskList[1],
+            'propulsionTask3' : propulsionTaskList[2],
+            'propulsionTask4' : propulsionTaskList[3],
+            'propulsionTask5' : propulsionTaskList[4],
+            'propulsionTask6' : propulsionTaskList[5],
+        }
+    return render_template('propulsion.html', **templateData)
+
 if __name__ == "__main__":
    app.run(host='0.0.0.0', port=80, debug=True)
