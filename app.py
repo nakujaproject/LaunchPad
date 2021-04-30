@@ -88,7 +88,7 @@ def groupIndex():
             'avionicsTask6' : avionicsTaskList[5],
             'avionicsWarnings' : "None",
         }
-        return render_template('avionics.html', **templateData)
+        return render_template('Avionics.html', **templateData)
 
 @app.route("/propulsion/Task/<taskNum>")
 def propulsionTasks(taskNum):
@@ -164,7 +164,7 @@ def avionicsTasks(taskNum):
             'avionicsTask6' : avionicsTaskList[5],
             'avionicsWarnings' : "None",
         }
-    return render_template('avionics.html', **templateData)
+    return render_template('Avionics.html', **templateData)
 
 @app.route("/propulsion/<action>")
 def propulsionActions(action):
@@ -249,7 +249,7 @@ def avionicsActions(action):
             'avionicsTask6' : avionicsTaskList[5],
             'avionicsWarnings' : warnings,
         }
-    return render_template('avionics.html', **templateData)
+    return render_template('Avionics.html', **templateData)
 
 if __name__ == "__main__":
    app.run(host='0.0.0.0', port=80, debug=True)
