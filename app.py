@@ -1,94 +1,100 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, json, jsonify
 import numpy as np
 
 app = Flask(__name__)
 
-#propulsion task bar
+# propulsion task bar
 propulsionProgress = 0
 
-#propulsion number of tasks
+# propulsion number of tasks
 propulsionNumTasks = 6
 
-#propulsion task list
+# propulsion task list
 propulsionTaskList = [""] * propulsionNumTasks
 
-#airframe task bar
+# airframe task bar
 airframeProgress = 0
 
-#airframe number of tasks
+# airframe number of tasks
 airframeNumTasks = 10
 
-#airframe task list
+# airframe task list
 airframeTaskList = [""] * airframeNumTasks
 
-#avionics task bar
+# avionics task bar
 avionicsProgress = 0
 
-#avionics number of tasks
+# avionics number of tasks
 avionicsNumTasks = 6
 
-#avionics task list
+# avionics task list
 avionicsTaskList = [""] * avionicsNumTasks
 
-#team go status
+avionics_check = 0
+
+# team go status
 goStatus = np.zeros(3)
+
 
 @app.route("/")
 def index():
 
-	templateData = {
-      'propulsionPercentage' : propulsionProgress,
-      'airframePercentage' : airframeProgress,
-      'avionicsPercentage' : avionicsProgress,
-      }
-	return render_template('index.html', **templateData)
-	
+    templateData = {
+        'propulsionPercentage': propulsionProgress,
+        'airframePercentage': airframeProgress,
+        'avionicsPercentage': avionicsProgress,
+    }
+    return render_template('index.html', **templateData)
+
 
 @app.route("/propulsion")
 def groupIndex():
-        templateData = {
-            'propulsionPercentage' : propulsionProgress,
-            'propulsionTask1' : propulsionTaskList[0],
-            'propulsionTask2' : propulsionTaskList[1],
-            'propulsionTask3' : propulsionTaskList[2],
-            'propulsionTask4' : propulsionTaskList[3],
-            'propulsionTask5' : propulsionTaskList[4],
-            'propulsionTask6' : propulsionTaskList[5],
-            'propulsionWarnings' : "None",
-        }
-        return render_template('propulsion.html', **templateData)
+    templateData = {
+        'propulsionPercentage': propulsionProgress,
+        'propulsionTask1': propulsionTaskList[0],
+        'propulsionTask2': propulsionTaskList[1],
+        'propulsionTask3': propulsionTaskList[2],
+        'propulsionTask4': propulsionTaskList[3],
+        'propulsionTask5': propulsionTaskList[4],
+        'propulsionTask6': propulsionTaskList[5],
+        'propulsionWarnings': "None",
+    }
+    return render_template('propulsion.html', **templateData)
+
 
 @app.route("/airframe")
 def airframegroupIndex():
-        templateData = {
-            'airframePercentage' : airframeProgress,
-            'airframeTask1' : airframeTaskList[0],
-            'airframeTask2' : airframeTaskList[1],
-            'airframeTask3' : airframeTaskList[2],
-            'airframeTask4' : airframeTaskList[3],
-            'airframeTask5' : airframeTaskList[4],
-            'airframeTask6' : airframeTaskList[5],
-            'airframeTask7' : airframeTaskList[6],
-            'airframeTask8' : airframeTaskList[7],
-            'airframeTask9' : airframeTaskList[8],
-            'airframeTask10' : airframeTaskList[9],
-            'airframeWarnings' : "None",
-        }
-        return render_template('airframe.html', **templateData)
+    templateData = {
+        'airframePercentage': airframeProgress,
+        'airframeTask1': airframeTaskList[0],
+        'airframeTask2': airframeTaskList[1],
+        'airframeTask3': airframeTaskList[2],
+        'airframeTask4': airframeTaskList[3],
+        'airframeTask5': airframeTaskList[4],
+        'airframeTask6': airframeTaskList[5],
+        'airframeTask7': airframeTaskList[6],
+        'airframeTask8': airframeTaskList[7],
+        'airframeTask9': airframeTaskList[8],
+        'airframeTask10': airframeTaskList[9],
+        'airframeWarnings': "None",
+    }
+    return render_template('airframe.html', **templateData)
+
 
 @app.route("/avionics")
 def avionicsGroupIndex():
-        templateData = {
-            'avionicsPercentage' : avionicsProgress,
-            'avionicsTask1' : avionicsTaskList[0],
-            'avionicsTask2' : avionicsTaskList[1],
-            'avionicsTask3' : avionicsTaskList[2],
-            'avionicsTask4' : avionicsTaskList[3],
-            'avionicsTask5' : avionicsTaskList[4],
-            'avionicsTask6' : avionicsTaskList[5],
-            'avionicsWarnings' : "None",
-        }
-        return render_template('Avionics.html', **templateData)
+    templateData = {
+        'avionicsPercentage': avionicsProgress,
+        'avionicsTask1': avionicsTaskList[0],
+        'avionicsTask2': avionicsTaskList[1],
+        'avionicsTask3': avionicsTaskList[2],
+        'avionicsTask4': avionicsTaskList[3],
+        'avionicsTask5': avionicsTaskList[4],
+        'avionicsTask6': avionicsTaskList[5],
+        'avionicsWarnings': "None",
+    }
+    return render_template('Avionics.html', **templateData)
+
 
 @app.route("/propulsion/Task/<taskNum>")
 def propulsionTasks(taskNum):
@@ -101,18 +107,20 @@ def propulsionTasks(taskNum):
     else:
         propulsionTaskList[taskNum - 1] = ""
 
-    propulsionProgress = propulsionTaskList.count("checked") / propulsionNumTasks * 100
+    propulsionProgress = propulsionTaskList.count(
+        "checked") / propulsionNumTasks * 100
     templateData = {
-            'propulsionPercentage' : propulsionProgress,
-            'propulsionTask1' : propulsionTaskList[0],
-            'propulsionTask2' : propulsionTaskList[1],
-            'propulsionTask3' : propulsionTaskList[2],
-            'propulsionTask4' : propulsionTaskList[3],
-            'propulsionTask5' : propulsionTaskList[4],
-            'propulsionTask6' : propulsionTaskList[5],
-            'propulsionWarnings' : "None",
-        }
+        'propulsionPercentage': propulsionProgress,
+        'propulsionTask1': propulsionTaskList[0],
+        'propulsionTask2': propulsionTaskList[1],
+        'propulsionTask3': propulsionTaskList[2],
+        'propulsionTask4': propulsionTaskList[3],
+        'propulsionTask5': propulsionTaskList[4],
+        'propulsionTask6': propulsionTaskList[5],
+        'propulsionWarnings': "None",
+    }
     return render_template('propulsion.html', **templateData)
+
 
 @app.route("/airframe/Task/<taskNum>")
 def airframeTasks(taskNum):
@@ -125,22 +133,24 @@ def airframeTasks(taskNum):
     else:
         airframeTaskList[taskNum - 1] = ""
 
-    airframeProgress = airframeTaskList.count("checked") / airframeNumTasks * 100
+    airframeProgress = airframeTaskList.count(
+        "checked") / airframeNumTasks * 100
     templateData = {
-            'airframePercentage' : airframeProgress,
-            'airframeTask1' : airframeTaskList[0],
-            'airframeTask2' : airframeTaskList[1],
-            'airframeTask3' : airframeTaskList[2],
-            'airframeTask4' : airframeTaskList[3],
-            'airframeTask5' : airframeTaskList[4],
-            'airframeTask6' : airframeTaskList[5],
-            'airframeTask7' : airframeTaskList[6],
-            'airframeTask8' : airframeTaskList[7],
-            'airframeTask9' : airframeTaskList[8],
-            'airframeTask10' : airframeTaskList[9],
-            'airframeWarnings' : "None",
-        }
+        'airframePercentage': airframeProgress,
+        'airframeTask1': airframeTaskList[0],
+        'airframeTask2': airframeTaskList[1],
+        'airframeTask3': airframeTaskList[2],
+        'airframeTask4': airframeTaskList[3],
+        'airframeTask5': airframeTaskList[4],
+        'airframeTask6': airframeTaskList[5],
+        'airframeTask7': airframeTaskList[6],
+        'airframeTask8': airframeTaskList[7],
+        'airframeTask9': airframeTaskList[8],
+        'airframeTask10': airframeTaskList[9],
+        'airframeWarnings': "None",
+    }
     return render_template('airframe.html', **templateData)
+
 
 @app.route("/avionics/Task/<taskNum>")
 def avionicsTasks(taskNum):
@@ -153,18 +163,20 @@ def avionicsTasks(taskNum):
     else:
         avionicsTaskList[taskNum - 1] = ""
 
-    avionicsProgress = avionicsTaskList.count("checked") / avionicsNumTasks * 100
+    avionicsProgress = avionicsTaskList.count(
+        "checked") / avionicsNumTasks * 100
     templateData = {
-            'avionicsPercentage' : avionicsProgress,
-            'avionicsTask1' : avionicsTaskList[0],
-            'avionicsTask2' : avionicsTaskList[1],
-            'avionicsTask3' : avionicsTaskList[2],
-            'avionicsTask4' : avionicsTaskList[3],
-            'avionicsTask5' : avionicsTaskList[4],
-            'avionicsTask6' : avionicsTaskList[5],
-            'avionicsWarnings' : "None",
-        }
+        'avionicsPercentage': avionicsProgress,
+        'avionicsTask1': avionicsTaskList[0],
+        'avionicsTask2': avionicsTaskList[1],
+        'avionicsTask3': avionicsTaskList[2],
+        'avionicsTask4': avionicsTaskList[3],
+        'avionicsTask5': avionicsTaskList[4],
+        'avionicsTask6': avionicsTaskList[5],
+        'avionicsWarnings': "None",
+    }
     return render_template('Avionics.html', **templateData)
+
 
 @app.route("/propulsion/<action>")
 def propulsionActions(action):
@@ -178,20 +190,21 @@ def propulsionActions(action):
             goStatus[0] = 1
             warnings = "None"
         else:
-            #print out warnings
+            # print out warnings
             warnings = "incomplete tasks"
-    
+
     templateData = {
-            'propulsionPercentage' : propulsionProgress,
-            'propulsionTask1' : propulsionTaskList[0],
-            'propulsionTask2' : propulsionTaskList[1],
-            'propulsionTask3' : propulsionTaskList[2],
-            'propulsionTask4' : propulsionTaskList[3],
-            'propulsionTask5' : propulsionTaskList[4],
-            'propulsionTask6' : propulsionTaskList[5],
-            'propulsionWarnings' : warnings,
-        }
+        'propulsionPercentage': propulsionProgress,
+        'propulsionTask1': propulsionTaskList[0],
+        'propulsionTask2': propulsionTaskList[1],
+        'propulsionTask3': propulsionTaskList[2],
+        'propulsionTask4': propulsionTaskList[3],
+        'propulsionTask5': propulsionTaskList[4],
+        'propulsionTask6': propulsionTaskList[5],
+        'propulsionWarnings': warnings,
+    }
     return render_template('propulsion.html', **templateData)
+
 
 @app.route("/airframe/<action>")
 def airframeActions(action):
@@ -205,24 +218,25 @@ def airframeActions(action):
             goStatus[0] = 1
             warnings = "None"
         else:
-            #print out warnings
+            # print out warnings
             warnings = "incomplete tasks"
-    
+
     templateData = {
-            'airframePercentage' : airframeProgress,
-            'airframeTask1' : airframeTaskList[0],
-            'airframeTask2' : airframeTaskList[1],
-            'airframeTask3' : airframeTaskList[2],
-            'airframeTask4' : airframeTaskList[3],
-            'airframeTask5' : airframeTaskList[4],
-            'airframeTask6' : airframeTaskList[5],
-            'airframeTask7' : airframeTaskList[6],
-            'airframeTask8' : airframeTaskList[7],
-            'airframeTask9' : airframeTaskList[8],
-            'airframeTask10' : airframeTaskList[9],
-            'airframeWarnings' : warnings,
-        }
+        'airframePercentage': airframeProgress,
+        'airframeTask1': airframeTaskList[0],
+        'airframeTask2': airframeTaskList[1],
+        'airframeTask3': airframeTaskList[2],
+        'airframeTask4': airframeTaskList[3],
+        'airframeTask5': airframeTaskList[4],
+        'airframeTask6': airframeTaskList[5],
+        'airframeTask7': airframeTaskList[6],
+        'airframeTask8': airframeTaskList[7],
+        'airframeTask9': airframeTaskList[8],
+        'airframeTask10': airframeTaskList[9],
+        'airframeWarnings': warnings,
+    }
     return render_template('airframe.html', **templateData)
+
 
 @app.route("/avionics/<action>")
 def avionicsActions(action):
@@ -236,20 +250,60 @@ def avionicsActions(action):
             goStatus[0] = 1
             warnings = "None"
         else:
-            #print out warnings
+            # print out warnings
             warnings = "incomplete tasks"
-    
+
     templateData = {
-            'avionicsPercentage' : avionicsProgress,
-            'avionicsTask1' : avionicsTaskList[0],
-            'avionicsTask2' : avionicsTaskList[1],
-            'avionicsTask3' : avionicsTaskList[2],
-            'avionicsTask4' : avionicsTaskList[3],
-            'avionicsTask5' : avionicsTaskList[4],
-            'avionicsTask6' : avionicsTaskList[5],
-            'avionicsWarnings' : warnings,
-        }
+        'avionicsPercentage': avionicsProgress,
+        'avionicsTask1': avionicsTaskList[0],
+        'avionicsTask2': avionicsTaskList[1],
+        'avionicsTask3': avionicsTaskList[2],
+        'avionicsTask4': avionicsTaskList[3],
+        'avionicsTask5': avionicsTaskList[4],
+        'avionicsTask6': avionicsTaskList[5],
+        'avionicsWarnings': warnings,
+    }
     return render_template('Avionics.html', **templateData)
 
+
+@app.route('/avionics/start-logging', methods=['GET'])
+def get_tasks():
+    response = {
+        "status": avionics_check
+    }
+    return jsonify(response)
+
+
+@app.route('/avionics/init-done', methods=['POST'])
+def avionics_init_done():
+    request_data = json.loads(request.data)
+    print(request_data)
+    status = request_data['status']
+    if status == "Done":
+        response = {
+            "status": "Success"
+        }
+    else:
+        response = {
+            "status": "Failed"
+        }
+    return jsonify(response)
+
+
+@app.route("/avionics/start-logging/status/<statusNum>")
+def avionicsStartLogging(statusNum):
+    global avionics_check
+    # complete a task and check it
+    statusNum = int(statusNum)
+    avionics_check = statusNum
+    print(avionics_check)
+    templateData = {
+        'propulsionPercentage': propulsionProgress,
+        'airframePercentage': airframeProgress,
+        'avionicsPercentage': avionicsProgress,
+    }
+    return render_template('index.html', **templateData)
+
+
 if __name__ == "__main__":
-   app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port=80, debug=True)
