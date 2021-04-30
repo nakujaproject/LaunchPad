@@ -77,7 +77,7 @@ def airframegroupIndex():
         return render_template('airframe.html', **templateData)
 
 @app.route("/avionics")
-def groupIndex():
+def avionicsGroupIndex():
         templateData = {
             'avionicsPercentage' : avionicsProgress,
             'avionicsTask1' : avionicsTaskList[0],
