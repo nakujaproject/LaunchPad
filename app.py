@@ -21,6 +21,15 @@ airframeNumTasks = 10
 #airframe task list
 airframeTaskList = [""] * airframeNumTasks
 
+#avionics task bar
+avionicsProgress = 0
+
+#avionics number of tasks
+avionicsNumTasks = 6
+
+#avionics task list
+avionicsTaskList = [""] * avionicsNumTasks
+
 #team go status
 goStatus = np.zeros(3)
 
@@ -30,6 +39,7 @@ def index():
 	templateData = {
       'propulsionPercentage' : propulsionProgress,
       'airframePercentage' : airframeProgress,
+      'avionicsPercentage' : avionicsProgress,
       }
 	return render_template('index.html', **templateData)
 	
@@ -65,6 +75,20 @@ def airframegroupIndex():
             'airframeWarnings' : "None",
         }
         return render_template('airframe.html', **templateData)
+
+@app.route("/avionics")
+def groupIndex():
+        templateData = {
+            'avionicsPercentage' : avionicsProgress,
+            'avionicsTask1' : avionicsTaskList[0],
+            'avionicsTask2' : avionicsTaskList[1],
+            'avionicsTask3' : avionicsTaskList[2],
+            'avionicsTask4' : avionicsTaskList[3],
+            'avionicsTask5' : avionicsTaskList[4],
+            'avionicsTask6' : avionicsTaskList[5],
+            'avionicsWarnings' : "None",
+        }
+        return render_template('avionics.html', **templateData)
 
 @app.route("/propulsion/Task/<taskNum>")
 def propulsionTasks(taskNum):
@@ -117,6 +141,30 @@ def airframeTasks(taskNum):
             'airframeWarnings' : "None",
         }
     return render_template('airframe.html', **templateData)
+
+@app.route("/avionics/Task/<taskNum>")
+def avionicsTasks(taskNum):
+    global avionicsProgress, avionicsTaskList
+    # complete a task and check it
+    taskNum = int(taskNum)
+    if avionicsTaskList[taskNum - 1] == "":
+        avionicsTaskList[taskNum - 1] = "checked"
+    # remove task if unchecked
+    else:
+        avionicsTaskList[taskNum - 1] = ""
+
+    avionicsProgress = avionicsTaskList.count("checked") / avionicsNumTasks * 100
+    templateData = {
+            'avionicsPercentage' : avionicsProgress,
+            'avionicsTask1' : avionicsTaskList[0],
+            'avionicsTask2' : avionicsTaskList[1],
+            'avionicsTask3' : avionicsTaskList[2],
+            'avionicsTask4' : avionicsTaskList[3],
+            'avionicsTask5' : avionicsTaskList[4],
+            'avionicsTask6' : avionicsTaskList[5],
+            'avionicsWarnings' : "None",
+        }
+    return render_template('avionics.html', **templateData)
 
 @app.route("/propulsion/<action>")
 def propulsionActions(action):
@@ -175,6 +223,33 @@ def airframeActions(action):
             'airframeWarnings' : warnings,
         }
     return render_template('airframe.html', **templateData)
+
+@app.route("/avionics/<action>")
+def avionicsActions(action):
+    global avionicsProgress, avionicsTaskList, goStatus
+    if action == "abort":
+        avionicsProgress = 0
+        avionicsTaskList = [""] * avionicsNumTasks
+        warnings = "None"
+    elif action == "go":
+        if avionicsProgress == 100:
+            goStatus[0] = 1
+            warnings = "None"
+        else:
+            #print out warnings
+            warnings = "incomplete tasks"
+    
+    templateData = {
+            'avionicsPercentage' : avionicsProgress,
+            'avionicsTask1' : avionicsTaskList[0],
+            'avionicsTask2' : avionicsTaskList[1],
+            'avionicsTask3' : avionicsTaskList[2],
+            'avionicsTask4' : avionicsTaskList[3],
+            'avionicsTask5' : avionicsTaskList[4],
+            'avionicsTask6' : avionicsTaskList[5],
+            'avionicsWarnings' : warnings,
+        }
+    return render_template('avionics.html', **templateData)
 
 if __name__ == "__main__":
    app.run(host='0.0.0.0', port=80, debug=True)
