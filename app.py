@@ -3,6 +3,9 @@ import numpy as np
 from modules.ignition import *
 import RPi.GPIO as GPIO
 
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+
 app = Flask(__name__)
 
 # propulsion task bar
