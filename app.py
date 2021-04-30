@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, json, jsonify
 import numpy as np
 from modules.ignition import *
 import RPi.GPIO as GPIO
+import board
+import neopixel
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -51,6 +53,8 @@ ignitionThreads = []
 
 testNum = 0
 
+pixels = neopixel.NeoPixel(board.D18, 8)
+
 @app.route("/")
 def index():
 
@@ -66,6 +70,7 @@ def index():
 def launch():
     global testNum
     warnings = ""
+    pixels.fill((255, 0, 0))
     if np.count_nonzero(goStatus == 1) == 3:
         t1 = Ignition(actuator)
         ignitionThreads.append(t1)
