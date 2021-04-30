@@ -25,9 +25,9 @@
                                     <h6 class="text-primary font-weight-bold m-0">Progression</h6>
                                 </div>
                                 <div class="card-body">
-                                    <h4 class="small font-weight-bold">Progress bar<span class="float-right">Complete!</span></h4>
+                                    <h4 class="small font-weight-bold">Progress bar<span class="float-right">{{ avionicsPercentage }}</span></h4>
                                     <div class="progress mb-4">
-                                        <div class="progress-bar bg-success" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"><span class="sr-only">100%</span></div>
+                                         <div class="progress-bar bg-success" aria-valuenow="100" aria-valuemin="0" aria-valuemax="{{ avionicsPercentage }}" style="width: {{ avionicsPercentage }}%;"><span class="sr-only">{{ avionicsPercentage }} %</span></div>
                                     </div>
                                 </div>
                             </div>
