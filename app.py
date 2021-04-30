@@ -55,6 +55,8 @@ testNum = 0
 
 pixels = neopixel.NeoPixel(board.D18, 8)
 
+pixels.fill((75,0,130))
+
 @app.route("/")
 def index():
 
