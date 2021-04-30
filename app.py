@@ -59,7 +59,7 @@ pixels.fill((75,0,130))
 
 @app.route("/")
 def index():
-
+    pixels.fill((75,0,130))
     templateData = {
         'propulsionPercentage': propulsionProgress,
         'airframePercentage': airframeProgress,
