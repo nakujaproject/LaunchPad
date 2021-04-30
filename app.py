@@ -82,7 +82,7 @@ def airframegroupIndex():
 
 
 @app.route("/avionics")
-def avionicsGroupIndex():
+def avionicsgroupIndex():
     templateData = {
         'avionicsPercentage': avionicsProgress,
         'avionicsTask1': avionicsTaskList[0],
