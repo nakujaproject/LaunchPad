@@ -1,5 +1,12 @@
 from flask import Flask, render_template, request, json, jsonify
 import numpy as np
+from modules.ignition import *
+import RPi.GPIO as GPIO
+import board
+import neopixel
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 
 app = Flask(__name__)
 
@@ -35,17 +42,70 @@ avionics_check = 0
 # team go status
 goStatus = np.zeros(3)
 
+# Define led pins as output
+actuator = 19
+GPIO.setup(actuator, GPIO.OUT)   
+
+# turn leds OFF 
+GPIO.output(actuator, GPIO.LOW)
+
+ignitionThreads = []
+
+testNum = 0
+
+pixels = neopixel.NeoPixel(board.D18, 8)
+
+pixels.fill((75,0,130))
 
 @app.route("/")
 def index():
-
+    pixels.fill((75,0,130))
     templateData = {
         'propulsionPercentage': propulsionProgress,
         'airframePercentage': airframeProgress,
         'avionicsPercentage': avionicsProgress,
+        'warnings': "None"
     }
     return render_template('index.html', **templateData)
 
+@app.route("/launch")
+def launch():
+    global testNum
+    warnings = ""
+    pixels.fill((255, 0, 0))
+    if np.count_nonzero(goStatus == 1) == 3:
+        t1 = Ignition(actuator)
+        ignitionThreads.append(t1)
+        ignitionThreads[testNum].start()
+        ignitionThreads[testNum].stop()
+        testNum = testNum + 1
+    else:
+        if goStatus[0] == 0:
+            warnings = warnings + "Propulsion is not ready\n"
+        if goStatus[1] == 0:
+            warnings = warnings + "Airframe is not ready\n"
+        if goStatus[2] == 0:
+            warnings = warnings + "Avionics is not ready\n"
+    templateData = {
+        'propulsionPercentage': propulsionProgress,
+        'airframePercentage': airframeProgress,
+        'avionicsPercentage': avionicsProgress,
+        'warnings': warnings,
+    }
+    return render_template('index.html', **templateData)
+
+@app.route("/abort")
+def abort():
+    global goStatus
+    warnings = "None"
+    goStatus[:] = 0
+    templateData = {
+        'propulsionPercentage': propulsionProgress,
+        'airframePercentage': airframeProgress,
+        'avionicsPercentage': avionicsProgress,
+        'warnings': warnings,
+    }
+    return render_template('index.html', **templateData)
 
 @app.route("/propulsion")
 def groupIndex():
@@ -215,7 +275,7 @@ def airframeActions(action):
         warnings = "None"
     elif action == "go":
         if airframeProgress == 100:
-            goStatus[0] = 1
+            goStatus[1] = 1
             warnings = "None"
         else:
             # print out warnings
@@ -247,7 +307,7 @@ def avionicsActions(action):
         warnings = "None"
     elif action == "go":
         if avionicsProgress == 100:
-            goStatus[0] = 1
+            goStatus[2] = 1
             warnings = "None"
         else:
             # print out warnings
